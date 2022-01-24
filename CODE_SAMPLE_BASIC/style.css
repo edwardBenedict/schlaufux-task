@@ -48,3 +48,18 @@ body {
   display: flex;
   margin: 20px;
 }
+
+.error-par {
+  color: red;
+  font-size: 24px;
+}
+
+.succes-par {
+  color: green;
+  font-size: 24px;
+}
+
+.warning-par {
+  color: orange;
+  font-size: 24px;
+}

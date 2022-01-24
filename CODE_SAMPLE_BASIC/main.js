@@ -12,7 +12,11 @@ const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 let options = ["this", "this not", "this either"];
 let states = [false, false, false];
 let correct_answer_index = 0;
+let selectedQuestionIndex = 1;
+let checkSelectedQuestion = { isSelected: false, check: false };
 let questions;
+let nextBtn;
+let getScore;
 
 function handleClientLoad() {
   gapi.load("client", initClient);
@@ -56,6 +60,8 @@ function getExerciseData() {
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  nextBtn = document.querySelector("#next-btn");
+  getScore = document.querySelector("#get-score");
   let optionsContainer = document.querySelector("#options-wrapper");
   for (let i = 0; i < options.length; i++) {
     optionsContainer.innerHTML +=
@@ -67,19 +73,19 @@ function init() {
 
 function newQuestion() {
   let optionsContainer = document.querySelector("#options-wrapper");
-  if (questions) options = questions[1][3].split(";");
+  if (questions) options = questions[selectedQuestionIndex][3].split(";");
 
   optionsContainer.innerHTML = "";
   for (let i = 0; i < options.length; i++) {
     optionsContainer.innerHTML +=
       `<div class='unchosen option' id='${`option${i}`}' onclick='chooseOption(
-        ${i},${"questions[1]"},${`options[${i}]`}
+        ${i},${`questions[${selectedQuestionIndex}]`},${`options[${i}]`}
         )'=><p class='text'>` +
       options[i] +
       "</p></div>";
   }
   let questionWrapper = document.querySelector(".question");
-  questionWrapper.innerHTML = questions[1][2];
+  questionWrapper.innerHTML = questions[selectedQuestionIndex][2];
 }
 
 function toggleChoice(i) {
@@ -115,8 +121,38 @@ function chooseOption(i, j, k) {
       option.classList.remove("chosen");
     }
   }
-  // let selectedOption = document.querySelector(`#option${i}`);
-  // selectedOption.classList.add("chosen");
-  // console.log("selectedOption", selectedOption.innerHTML);
-  if (i == j[4]) console.log("point: ", j[5]);
+  checkSelectedQuestion.isSelected = true;
+  checkSelectedQuestion.check = i == j[4];
+}
+
+function myEval() {
+  let checkMessage = document.querySelector("#check-message");
+  nextBtn.style.display = "none";
+  if (checkSelectedQuestion.isSelected) {
+    if (checkSelectedQuestion.check) {
+      checkMessage.innerHTML =
+        "<p class='succes-par'>Congrats! Correct...👏</p>";
+      nextBtn.style.display = "block";
+    } else {
+      checkMessage.innerHTML =
+        "<p class='error-par'>Wrong Answer. Try Again!</p>";
+      nextBtn.style.display = "block";
+      console.log("keep trying!");
+    }
+  } else {
+    checkMessage.innerHTML = "<p class='warning-par'>Choose an option!</p>";
+  }
+}
+
+function next() {
+  if (selectedQuestionIndex < questions.length - 1) {
+    selectedQuestionIndex++;
+    console.log("123");
+    nextBtn.style.display = "none";
+    newQuestion();
+  } else if (selectedQuestionIndex == questions.length - 1) {
+    console.log("end of questions");
+    nextBtn.style.display = "none";
+    getScore.style.display = "block";
+  }
 }

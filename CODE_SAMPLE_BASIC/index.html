@@ -17,8 +17,21 @@
     <p class="question">Which is the correct option?</p>
     <div id="options-wrapper"></div>
 
+    <!-- Template Part -->
+    <button onclick="myEval()">Check</button>
+    <div id="check-message"></div>
+    <!-- -->
+    <br />
+    <button onclick="next()" style="display: none" id="next-btn">Next</button>
+    <button onclick="getScore()" style="display: none" id="get-score">
+      Get Score
+    </button>
+
+    <br />
+    <!-- Template Part -->
     <button onclick="myEvaluation()">Evaluate!</button>
     <div id="evaluation-message"></div>
+    <!-- -->
     <script
       async
       defer
