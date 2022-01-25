@@ -11,12 +11,19 @@ const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
 let options = ["this", "this not", "this either"];
 let states = [false, false, false];
-let correct_answer_index = 0;
-let selectedQuestionIndex = 1;
-let checkSelectedQuestion = { isSelected: false, check: false };
-let questions;
+let correctAnswerIndex;
+let selectedAnswerIndex;
+
+let question;
+let getSecureQuestionIndex = 2;
+let point;
+let totalPoints = 0;
+
+let resultDiv;
 let nextBtn;
-let getScore;
+let questionDiv;
+let optionsContainer;
+let checktBtn;
 
 function handleClientLoad() {
   gapi.load("client", initClient);
@@ -30,7 +37,7 @@ function initClient() {
     })
     .then(
       function () {
-        getExerciseData();
+        getExerciseData(`D${getSecureQuestionIndex}`);
       },
       function (error) {
         console.log(JSON.stringify(error, null, 2));
@@ -38,63 +45,58 @@ function initClient() {
     );
 }
 
-function getExerciseData() {
-  gapi.client.sheets.spreadsheets.values
-    .get({
-      spreadsheetId: "1hzA42BEzt2lPvOAePP6RLLRZKggbg0RWuxSaEwd5xLc",
-      range: "Learning!A1:F10",
-    })
-    .then(
-      function (response) {
-        console.log(response);
-        questions = response.result.values;
-        console.log("Questions", questions);
-        questions && newQuestion();
-      },
-      function (response) {
-        console.log("Error: " + response.result.error.message);
-      }
-    );
+async function getExerciseData(end) {
+  const response = await gapi.client.sheets.spreadsheets.values.get({
+    spreadsheetId: "1hzA42BEzt2lPvOAePP6RLLRZKggbg0RWuxSaEwd5xLc",
+    range: `Learning!A${getSecureQuestionIndex}:${end}`,
+  });
+  console.log(response.result.values);
+  question = response.result.values[0][2];
+  options = response.result.values[0][3].split(";");
+  try {
+    correctAnswerIndex = response.result.values[0][4];
+    point = response.result.values[0][5];
+  } catch (error) {}
+  console.log("question", question, options);
+  question && options ? init() : console.log("no data");
+  return point;
 }
 
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  questionDiv = document.querySelector("#question");
   nextBtn = document.querySelector("#next-btn");
-  getScore = document.querySelector("#get-score");
-  let optionsContainer = document.querySelector("#options-wrapper");
-  for (let i = 0; i < options.length; i++) {
-    optionsContainer.innerHTML +=
-      "<div class='unchosen option'><p class='text'>" +
-      options[i] +
-      "</p></div>";
-  }
-}
+  optionsContainer = document.querySelector("#options-wrapper");
+  resultDiv = document.querySelector("#result");
+  checktBtn = document.querySelector("#check-btn");
 
-function newQuestion() {
-  let optionsContainer = document.querySelector("#options-wrapper");
-  if (questions) options = questions[selectedQuestionIndex][3].split(";");
-
+  questionDiv.innerHTML = question;
   optionsContainer.innerHTML = "";
   for (let i = 0; i < options.length; i++) {
     optionsContainer.innerHTML +=
       `<div class='unchosen option' id='${`option${i}`}' onclick='chooseOption(
-        ${i},${`questions[${selectedQuestionIndex}]`},${`options[${i}]`}
+        ${i},${`options[${i}]`}
         )'=><p class='text'>` +
       options[i] +
       "</p></div>";
   }
-  let questionWrapper = document.querySelector(".question");
-  questionWrapper.innerHTML = questions[selectedQuestionIndex][2];
+  //   for (let i = 0; i < options.length; i++) {
+  //     optionsContainer.innerHTML +=
+  //       "<div class='unchosen option'><p class='text'>" +
+  //       options[i] +
+  //       "</p></div>";
+  //   }
+  // ...
 }
 
 function toggleChoice(i) {
   states[i] = true;
-
   // ...
 }
 
 function myEvaluation() {
+  console.log("checkAnswer", point, correctAnswerIndex);
   let evMessage = document.querySelector("#evaluation-message");
   for (let i = 0; i < options.length; i++) {
     if (states[i] && i == correct_answer_index) {
@@ -109,8 +111,27 @@ function myEvaluation() {
   }
 }
 
-function chooseOption(i, j, k) {
-  console.log("i", i, j, k);
+async function checkAnswer() {
+  await getExerciseData(`F${getSecureQuestionIndex}`);
+  if (selectedAnswerIndex == undefined) {
+    resultDiv.innerHTML = `<p class="warning">Please select an option!</p>`;
+  } else if (selectedAnswerIndex == correctAnswerIndex) {
+    totalPoints += Number(point);
+    resultDiv.innerHTML = `<p>You got ${totalPoints} points!</p>`;
+    nextBtn.style.display = "block";
+    checktBtn.style.display = "none";
+  } else if (selectedAnswerIndex != correctAnswerIndex) {
+    resultDiv.innerHTML = `<p class="error">Wrong answer! Try again!</p>`;
+    nextBtn.style.display = "block";
+    checktBtn.style.display = "none";
+  }
+  selectedAnswerIndex = undefined;
+  correctAnswerIndex = undefined;
+}
+
+function chooseOption(i) {
+  console.log("i", i);
+  selectedAnswerIndex = i;
   for (let x = 0; x < options.length; x++) {
     let option = document.querySelector(`#option${x}`);
     if (x == i) {
@@ -121,38 +142,11 @@ function chooseOption(i, j, k) {
       option.classList.remove("chosen");
     }
   }
-  checkSelectedQuestion.isSelected = true;
-  checkSelectedQuestion.check = i == j[4];
 }
 
-function myEval() {
-  let checkMessage = document.querySelector("#check-message");
-  nextBtn.style.display = "none";
-  if (checkSelectedQuestion.isSelected) {
-    if (checkSelectedQuestion.check) {
-      checkMessage.innerHTML =
-        "<p class='succes-par'>Congrats! Correct...👏</p>";
-      nextBtn.style.display = "block";
-    } else {
-      checkMessage.innerHTML =
-        "<p class='error-par'>Wrong Answer. Try Again!</p>";
-      nextBtn.style.display = "block";
-      console.log("keep trying!");
-    }
-  } else {
-    checkMessage.innerHTML = "<p class='warning-par'>Choose an option!</p>";
-  }
-}
-
-function next() {
-  if (selectedQuestionIndex < questions.length - 1) {
-    selectedQuestionIndex++;
-    console.log("123");
-    nextBtn.style.display = "none";
-    newQuestion();
-  } else if (selectedQuestionIndex == questions.length - 1) {
-    console.log("end of questions");
-    nextBtn.style.display = "none";
-    getScore.style.display = "block";
-  }
+function nextQuestion() {
+  console.log(getSecureQuestionIndex);
+  getSecureQuestionIndex += 1;
+  getExerciseData(`D${getSecureQuestionIndex}`);
+  resultDiv.innerHTML = "";
 }
