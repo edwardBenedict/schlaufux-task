@@ -24,6 +24,8 @@ let nextBtn;
 let questionDiv;
 let optionsContainer;
 let checktBtn;
+let mainWrapper;
+let loading;
 
 function handleClientLoad() {
   gapi.load("client", initClient);
@@ -58,7 +60,11 @@ async function getExerciseData(end) {
     point = response.result.values[0][5];
   } catch (error) {}
   console.log("question", question, options);
-  question && options ? init() : console.log("no data");
+  if (question && options) {
+    init();
+    mainWrapper.style.display = "block";
+    loading.style.display = "none";
+  }
   return point;
 }
 
@@ -70,6 +76,8 @@ function init() {
   optionsContainer = document.querySelector("#options-wrapper");
   resultDiv = document.querySelector("#result");
   checktBtn = document.querySelector("#check-btn");
+  mainWrapper = document.querySelector("#main-wrapper");
+  loading = document.querySelector("#loading");
 
   questionDiv.innerHTML = question;
   optionsContainer.innerHTML = "";
@@ -149,4 +157,6 @@ function nextQuestion() {
   getSecureQuestionIndex += 1;
   getExerciseData(`D${getSecureQuestionIndex}`);
   resultDiv.innerHTML = "";
+  nextBtn.style.display = "none";
+  checktBtn.style.display = "block";
 }

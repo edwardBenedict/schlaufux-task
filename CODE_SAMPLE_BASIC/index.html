@@ -14,21 +14,26 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id="question-wrapper">
-      <div>Question</div>
-      <div id="question">Which is the correct option?</div>
+    <div id="loading">
+      <img src="./assets/loading.gif" alt="" width="150px" />
     </div>
-    <div id="options-wrapper"></div>
+    <div id="main-wrapper">
+      <div id="question-wrapper">
+        <div>Question</div>
+        <div id="question">Which is the correct option?</div>
+      </div>
+      <div id="options-wrapper"></div>
 
-    <!-- Check Button -->
-    <div>
-      <button id="check-btn" onclick="checkAnswer()">Check</button>
-      <button id="next-btn" onclick="nextQuestion()">Next</button>
+      <!-- Check Button -->
+      <div>
+        <button id="check-btn" onclick="checkAnswer()">Check</button>
+        <button id="next-btn" onclick="nextQuestion()">Next</button>
+      </div>
+
+      <button onclick="myEvaluation()">Evaluate!</button>
+      <div id="evaluation-message"></div>
+      <div id="result"></div>
     </div>
-
-    <button onclick="myEvaluation()">Evaluate!</button>
-    <div id="evaluation-message"></div>
-    <div id="result"></div>
     <script
       async
       defer
