@@ -39,7 +39,7 @@ function initClient() {
     })
     .then(
       function () {
-        getExerciseData(`D${getSecureQuestionIndex}`);
+        getExerciseData(`D${getSecureQuestionIndex}`, "first");
       },
       function (error) {
         console.log(JSON.stringify(error, null, 2));
@@ -47,25 +47,27 @@ function initClient() {
     );
 }
 
-async function getExerciseData(end) {
+async function getExerciseData(end, type) {
   const response = await gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId: "1hzA42BEzt2lPvOAePP6RLLRZKggbg0RWuxSaEwd5xLc",
     range: `Learning!A${getSecureQuestionIndex}:${end}`,
   });
   console.log(response.result.values);
-  question = response.result.values[0][2];
-  options = response.result.values[0][3].split(";");
-  try {
+  if (type == "checkAnswer") {
+    console.log("type", type);
     correctAnswerIndex = response.result.values[0][4];
     point = response.result.values[0][5];
-  } catch (error) {}
-  console.log("question", question, options);
-  if (question && options) {
-    init();
-    mainWrapper.style.display = "block";
-    loading.style.display = "none";
+  } else if (type == "first") {
+    console.log("type", type);
+    question = response.result.values[0][2];
+    options = response.result.values[0][3].split(";");
+    if (question && options) {
+      init();
+      mainWrapper.style.display = "block";
+      loading.style.display = "none";
+    }
   }
-  return point;
+  // return point;
 }
 
 document.addEventListener("DOMContentLoaded", init);
@@ -89,13 +91,6 @@ function init() {
       options[i] +
       "</p></div>";
   }
-  //   for (let i = 0; i < options.length; i++) {
-  //     optionsContainer.innerHTML +=
-  //       "<div class='unchosen option'><p class='text'>" +
-  //       options[i] +
-  //       "</p></div>";
-  //   }
-  // ...
 }
 
 function toggleChoice(i) {
@@ -120,7 +115,7 @@ function myEvaluation() {
 }
 
 async function checkAnswer() {
-  await getExerciseData(`F${getSecureQuestionIndex}`);
+  await getExerciseData(`F${getSecureQuestionIndex}`, "checkAnswer");
   if (selectedAnswerIndex == undefined) {
     resultDiv.innerHTML = `<p class="warning">Please select an option!</p>`;
   } else if (selectedAnswerIndex == correctAnswerIndex) {
@@ -155,7 +150,7 @@ function chooseOption(i) {
 function nextQuestion() {
   console.log(getSecureQuestionIndex);
   getSecureQuestionIndex += 1;
-  getExerciseData(`D${getSecureQuestionIndex}`);
+  getExerciseData(`D${getSecureQuestionIndex}`, "first");
   resultDiv.innerHTML = "";
   nextBtn.style.display = "none";
   checktBtn.style.display = "block";
