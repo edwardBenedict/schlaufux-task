@@ -26,6 +26,8 @@ let optionsContainer;
 let checktBtn;
 let mainWrapper;
 let loading;
+var correctAudio;
+var wrongAudio;
 
 function handleClientLoad() {
   gapi.load("client", initClient);
@@ -80,6 +82,8 @@ function init() {
   checktBtn = document.querySelector("#check-btn");
   mainWrapper = document.querySelector("#main-wrapper");
   loading = document.querySelector("#loading");
+  correctAudio = document.getElementById("correct-audio");
+  wrongAudio = document.getElementById("wrong-audio");
 
   questionDiv.innerHTML = question;
   optionsContainer.innerHTML = "";
@@ -116,6 +120,7 @@ function myEvaluation() {
 
 async function checkAnswer() {
   await getExerciseData(`F${getSecureQuestionIndex}`, "checkAnswer");
+  resultDiv.style.display = "block";
   if (selectedAnswerIndex == undefined) {
     resultDiv.innerHTML = `<p class="warning">Please select an option!</p>`;
   } else if (selectedAnswerIndex == correctAnswerIndex) {
@@ -123,10 +128,12 @@ async function checkAnswer() {
     resultDiv.innerHTML = `<p>You got ${totalPoints} points!</p>`;
     nextBtn.style.display = "block";
     checktBtn.style.display = "none";
+    correctAudio.play();
   } else if (selectedAnswerIndex != correctAnswerIndex) {
     resultDiv.innerHTML = `<p class="error">Wrong answer! Try again!</p>`;
     nextBtn.style.display = "block";
     checktBtn.style.display = "none";
+    wrongAudio.play();
   }
   selectedAnswerIndex = undefined;
   correctAnswerIndex = undefined;

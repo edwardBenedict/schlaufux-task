@@ -14,6 +14,14 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <audio id="correct-audio">
+      <source src="./assets/correct.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="wrong-audio">
+      <source src="./assets/wrong.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
     <div id="loading">
       <img src="./assets/loading.gif" alt="" width="150px" />
     </div>
@@ -25,13 +33,13 @@
       <div id="options-wrapper"></div>
 
       <!-- Check Button -->
-      <div>
+      <div class="button-wrapper">
         <button id="check-btn" onclick="checkAnswer()">Check</button>
         <button id="next-btn" onclick="nextQuestion()">Next</button>
+        <!-- <button onclick="myEvaluation()">Evaluate!</button> -->
       </div>
 
-      <button onclick="myEvaluation()">Evaluate!</button>
-      <div id="evaluation-message"></div>
+      <!-- <div id="evaluation-message"></div> -->
       <div id="result"></div>
     </div>
     <script

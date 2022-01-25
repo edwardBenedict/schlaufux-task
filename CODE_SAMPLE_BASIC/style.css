@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -41,10 +42,44 @@ body {
 }
 
 #result {
-  font-weight: bold;
+  /* font-weight: bold;
   font-size: 16px;
   text-align: center;
   transition: all 1s;
+  border-radius: 50px;
+  border-top: 1px solid;
+  width: 100vw;
+  display: none;
+  animation-name: result-animation;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  background-color: white; */
+
+  width: 100vw;
+  text-align: center;
+  margin-top: 25px;
+  display: none;
+  /* height: 100%; */
+
+  border-top: 1px solid;
+  position: relative;
+  animation-name: result-animation;
+  animation-duration: 1s;
+  border-radius: 50px;
+}
+
+@keyframes result-animation {
+  0% {
+    background-color: red;
+    left: 0px;
+    top: 250px;
+  }
+  100% {
+    background-color: white;
+    border-radius: 50px;
+    left: 0px;
+    top: 0px;
+  }
 }
 
 #next-btn {
@@ -57,6 +92,7 @@ body {
 
 #options-wrapper {
   display: flex;
+  justify-content: center;
 }
 
 button {
@@ -67,6 +103,11 @@ button {
   color: white;
   border-radius: 10px;
   cursor: pointer;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
 }
 
 #question-wrapper {
@@ -94,6 +135,7 @@ button {
     top: 0px;
   }
 }
+
 #option0 {
   position: relative;
   animation-name: option0animation;
