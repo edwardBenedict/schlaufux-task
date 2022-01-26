@@ -235,7 +235,7 @@ function nextQuestion() {
     /**
      * When getSecureQuestionIndex is equal or more than  10, user get score for the exercise.
      */
-    resultDiv.innerHTML = `<p>You got ${totalPoints} points!</p>`;
+    resultDiv.innerHTML = `<p class="success">You got ${totalPoints} points!</p>`;
     resetBtn.style.display = "block";
     nextBtn.style.display = "none";
   }
