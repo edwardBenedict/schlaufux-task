@@ -1,4 +1,4 @@
-// alert('js loaded!')
+// alert("js loaded!");
 // this is a basic structure for evaluation of a single choice exercise
 // INTENTIONALLY parts of the code have been deleted.
 //  It should serve as a hint towards finding a suitable solution for single choice exercise
@@ -9,23 +9,37 @@ const DISCOVERY_DOCS = [
 ];
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
+/**
+ * Define variables for algorithm.
+ */
 let options = ["this", "this not", "this either"];
-let states = [false, false, false];
 let correctAnswerIndex;
 let selectedAnswerIndex;
-
 let question;
-let getSecureQuestionIndex = 2;
 let point;
 let totalPoints = 0;
+/**
+ * Assigned this variable for, questions getting step by step. With this variable, user can not see the answer and next question until he/she choose an option.
+ */
+let getSecureQuestionIndex = 2;
 
+/**
+ * Define variables for the elements we need to access.
+ */
 let resultDiv;
 let nextBtn;
 let questionDiv;
 let optionsContainer;
 let checktBtn;
+let resetBtn;
 let mainWrapper;
+/**
+ * loading used for showing the loading animation.
+ */
 let loading;
+/**
+ * Audios used for playing the correct and wrong audio when user check the answer.
+ */
 var correctAudio;
 var wrongAudio;
 
@@ -49,31 +63,45 @@ function initClient() {
     );
 }
 
+/**
+ * This function is for get the exercise data from the sheet with the parameters like A1, F10.
+ * @param end is for which end of the sheet to get the data from
+ * @param type is for which function to get new question (first) or get answer and for check answer (checkAnswer)
+ */
 async function getExerciseData(end, type) {
   const response = await gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId: "1hzA42BEzt2lPvOAePP6RLLRZKggbg0RWuxSaEwd5xLc",
     range: `Learning!A${getSecureQuestionIndex}:${end}`,
   });
-  console.log(response.result.values);
+  /**
+   * If the type is checkAnswer, then get the answer and check the answer. If it is not user can not see the answer on the network.
+   */
   if (type == "checkAnswer") {
-    console.log("type", type);
     correctAnswerIndex = response.result.values[0][4];
     point = response.result.values[0][5];
+    /**
+     * If the type is first, then get the question and options.
+     */
   } else if (type == "first") {
-    console.log("type", type);
     question = response.result.values[0][2];
     options = response.result.values[0][3].split(";");
+    /**
+     * If there is question and options, initialize the exercise and remove the loading animation and show the main wrapper.
+     */
     if (question && options) {
       init();
       mainWrapper.style.display = "block";
       loading.style.display = "none";
     }
   }
-  // return point;
 }
 
 document.addEventListener("DOMContentLoaded", init);
 
+/**
+ * Assign the elements to variables.
+ * Create question and options elements.
+ */
 function init() {
   questionDiv = document.querySelector("#question");
   nextBtn = document.querySelector("#next-btn");
@@ -84,8 +112,16 @@ function init() {
   loading = document.querySelector("#loading");
   correctAudio = document.getElementById("correct-audio");
   wrongAudio = document.getElementById("wrong-audio");
+  resetBtn = document.querySelector("#reset-btn");
 
+  /**
+   * Create question element.
+   */
   questionDiv.innerHTML = question;
+
+  /**
+   * First remove old options and create new options elements.
+   */
   optionsContainer.innerHTML = "";
   for (let i = 0; i < options.length; i++) {
     optionsContainer.innerHTML +=
@@ -97,51 +133,62 @@ function init() {
   }
 }
 
-function toggleChoice(i) {
-  states[i] = true;
-  // ...
-}
-
-function myEvaluation() {
-  console.log("checkAnswer", point, correctAnswerIndex);
-  let evMessage = document.querySelector("#evaluation-message");
-  for (let i = 0; i < options.length; i++) {
-    if (states[i] && i == correct_answer_index) {
-      evMessage.innerHTML = "<p>Awesome!</p>";
-      // console.log('awesome')
-      break;
-    } else {
-      evMessage.innerHTML = "<p>Keep trying!</p>";
-      // console.log('tryAgain')
-      break;
-    }
-  }
-}
-
+/**
+ * Function for check the answer.
+ */
 async function checkAnswer() {
+  /**
+   * Check if the getSecureQuestionIndex is 10, if it is, then the user get score for the exercise.
+   */
+  if (getSecureQuestionIndex == 10) {
+    nextBtn.innerHTML = "Get Score!";
+  }
+  /**
+   * Get the question answer from the sheet. This is not called on the first time, because user can see the answer from network.
+   */
   await getExerciseData(`F${getSecureQuestionIndex}`, "checkAnswer");
   resultDiv.style.display = "block";
+
+  /**
+   * Check user is selected an option, if not, show warning message for select and option.
+   */
   if (selectedAnswerIndex == undefined) {
     resultDiv.innerHTML = `<p class="warning">Please select an option!</p>`;
   } else if (selectedAnswerIndex == correctAnswerIndex) {
+    /**
+     * Check if the user answer is correct, if it is, show the congrats message.
+     */
     totalPoints += Number(point);
-    resultDiv.innerHTML = `<p>You got ${totalPoints} points!</p>`;
+    resultDiv.innerHTML = `<p class="success">Congrats, You are right! 👏</p>`;
     nextBtn.style.display = "block";
     checktBtn.style.display = "none";
     correctAudio.play();
   } else if (selectedAnswerIndex != correctAnswerIndex) {
+    /**
+     * Check if the user answer is wrong, if it is, show the error message.
+     */
     resultDiv.innerHTML = `<p class="error">Wrong answer! Try again!</p>`;
     nextBtn.style.display = "block";
     checktBtn.style.display = "none";
     wrongAudio.play();
   }
+
+  /**
+   * This variable assigned undefined to using on another question.
+   */
   selectedAnswerIndex = undefined;
   correctAnswerIndex = undefined;
 }
 
+/**
+ * With this function, user can choose an option.
+ * @param  i is the index of the option that user selected.
+ */
 function chooseOption(i) {
-  console.log("i", i);
   selectedAnswerIndex = i;
+  /**
+   * This code block is for styling the selected option.
+   */
   for (let x = 0; x < options.length; x++) {
     let option = document.querySelector(`#option${x}`);
     if (x == i) {
@@ -154,11 +201,37 @@ function chooseOption(i) {
   }
 }
 
+/**
+ * After choose an option and show the result message, user can click this button to get next question.
+ */
 function nextQuestion() {
-  console.log(getSecureQuestionIndex);
-  getSecureQuestionIndex += 1;
-  getExerciseData(`D${getSecureQuestionIndex}`, "first");
-  resultDiv.innerHTML = "";
-  nextBtn.style.display = "none";
-  checktBtn.style.display = "block";
+  /**
+   * getSecureQuestionIndex is the index of the question that user get from the sheet.
+   * When getSecureQuestionIndex is less than 10, user can keep on the exercise.
+   */
+  if (getSecureQuestionIndex < 10) {
+    getSecureQuestionIndex += 1;
+    getExerciseData(`D${getSecureQuestionIndex}`, "first");
+    resultDiv.innerHTML = "";
+    resultDiv.style.display = "none";
+    nextBtn.style.display = "none";
+    checktBtn.style.display = "block";
+  } else {
+    /**
+     * When getSecureQuestionIndex is equal or more than  10, user get score for the exercise.
+     */
+    resultDiv.innerHTML = `<p>You got ${totalPoints} points!</p>`;
+    resetBtn.style.display = "block";
+    nextBtn.style.display = "none";
+  }
+}
+
+/**
+ * This function is for reset the exercise after completed the exercise.
+ */
+function reset() {
+  getSecureQuestionIndex = 2;
+  totalPoints = 0;
+  init();
+  resultDiv.style.display = "none";
 }
