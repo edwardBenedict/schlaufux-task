@@ -20,12 +20,16 @@ body {
   border: 2px solid #ae2012;
 }
 .option {
-  width: 100px;
+  width: 200px;
   height: 50px;
   border-radius: 25px;
   padding-left: auto;
   padding-right: auto;
   margin: 10px;
+}
+.option:hover {
+  cursor: pointer;
+  border: 2px solid #005f73;
 }
 .text {
   font-weight: bold;
@@ -36,32 +40,46 @@ body {
 
 .warning {
   color: orange;
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 25px;
+  height: 200px;
+  background: linear-gradient(#ffe8d6, #fff);
+  border-top: 5px solid green;
+  border-radius: 50px;
 }
 .error {
   color: red;
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 25px;
+  height: 200px;
+  background: linear-gradient(#ffe8d6, #fff);
+  border-top: 5px solid green;
+  border-radius: 50px;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 25px;
+  height: 200px;
+  background: linear-gradient(#ffe8d6, #fff);
+  border-top: 5px solid green;
+  border-radius: 50px;
+}
+
+#reset-btn {
+  display: none;
 }
 
 #result {
-  /* font-weight: bold;
-  font-size: 16px;
-  text-align: center;
-  transition: all 1s;
-  border-radius: 50px;
-  border-top: 1px solid;
-  width: 100vw;
-  display: none;
-  animation-name: result-animation;
-  animation-duration: 0.5s;
-  animation-iteration-count: 1;
-  background-color: white; */
-
   width: 100vw;
   text-align: center;
   margin-top: 25px;
   display: none;
-  /* height: 100%; */
-
-  border-top: 1px solid;
+  /* border-top: 2px solid; */
   position: relative;
   animation-name: result-animation;
   animation-duration: 1s;
@@ -70,13 +88,10 @@ body {
 
 @keyframes result-animation {
   0% {
-    background-color: red;
     left: 0px;
     top: 250px;
   }
   100% {
-    background-color: white;
-    border-radius: 50px;
     left: 0px;
     top: 0px;
   }
@@ -93,6 +108,7 @@ body {
 #options-wrapper {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 button {
@@ -186,7 +202,7 @@ button {
 
 @keyframes option2animation {
   0% {
-    background-color: blue;
+    background-color: white;
     right: 200px;
     top: 200px;
   }
