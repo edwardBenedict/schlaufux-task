@@ -21,7 +21,6 @@ let totalPoints = 0;
 /**
  * Assigned this variable for, questions getting step by step. With this variable, user can not see the answer and next question until he/she choose an option.
  */
-let getSecureQuestionIndex = 2;
 
 /**
  * Define variables for the elements we need to access.
@@ -42,6 +41,19 @@ let loading;
  */
 var correctAudio;
 var wrongAudio;
+
+/**
+ * Wil get getSecureQuestionIndex from an array the index of the question.
+ */
+let questionIndexArray = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+let getSecureQuestionIndex = randomSecureQuestionIndexGenerator();
+
+function randomSecureQuestionIndexGenerator() {
+  rin = Math.floor(Math.random() * questionIndexArray.length);
+  gsqi = questionIndexArray[rin];
+  questionIndexArray.splice(rin, 1);
+  return gsqi;
+}
 
 function handleClientLoad() {
   gapi.load("client", initClient);
@@ -140,12 +152,13 @@ async function checkAnswer() {
   /**
    * Check if the getSecureQuestionIndex is 10, if it is, then the user get score for the exercise.
    */
-  if (getSecureQuestionIndex == 10) {
+  if (questionIndexArray.length == 0) {
     nextBtn.innerHTML = "Get Score!";
   }
   /**
    * Get the question answer from the sheet. This is not called on the first time, because user can see the answer from network.
    */
+
   await getExerciseData(`F${getSecureQuestionIndex}`, "checkAnswer");
   resultDiv.style.display = "block";
 
@@ -209,8 +222,10 @@ function nextQuestion() {
    * getSecureQuestionIndex is the index of the question that user get from the sheet.
    * When getSecureQuestionIndex is less than 10, user can keep on the exercise.
    */
-  if (getSecureQuestionIndex < 10) {
-    getSecureQuestionIndex += 1;
+
+  if (questionIndexArray.length > 0) {
+    // getSecureQuestionIndex += 1;
+    getSecureQuestionIndex = randomSecureQuestionIndexGenerator();
     getExerciseData(`D${getSecureQuestionIndex}`, "first");
     resultDiv.innerHTML = "";
     resultDiv.style.display = "none";
@@ -230,8 +245,11 @@ function nextQuestion() {
  * This function is for reset the exercise after completed the exercise.
  */
 function reset() {
-  getSecureQuestionIndex = 2;
+  questionIndexArray = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  getSecureQuestionIndex = randomSecureQuestionIndexGenerator();
   totalPoints = 0;
-  init();
+  getExerciseData(`D${getSecureQuestionIndex}`, "first");
   resultDiv.style.display = "none";
+  resetBtn.style.display = "none";
+  checktBtn.style.display = "block";
 }
