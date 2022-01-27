@@ -1,3 +1,8 @@
+* {
+  font-family: "Lato", sans-serif;
+  color: rgb(97, 92, 92);
+}
+
 body {
   margin: 0;
   display: flex;
@@ -13,12 +18,13 @@ body {
 }
 .unchosen {
   transition: all 0.15s;
-  border: 2px solid white;
 }
 .chosen {
   transition: all 0.15s;
-  border: 2px solid #ae2012;
+  /* border: 2px solid #ae2012; */
+  background-color: #e9d8a6;
 }
+
 .option {
   width: 200px;
   height: 50px;
@@ -27,15 +33,12 @@ body {
   padding-right: auto;
   margin: 10px;
 }
-.option:hover {
-  cursor: pointer;
-  border: 2px solid #005f73;
-}
+
 .text {
   font-weight: bold;
   font-size: 16px;
-  color: black;
   text-align: center;
+  color: #ee9b00;
 }
 
 .warning {
@@ -45,7 +48,6 @@ body {
   padding: 25px;
   height: 200px;
   background: linear-gradient(#ffe8d6, #fff);
-  border-top: 5px solid green;
   border-radius: 50px;
 }
 .error {
@@ -77,13 +79,12 @@ body {
 #result {
   width: 100vw;
   text-align: center;
-  margin-top: 25px;
+
   display: none;
   /* border-top: 2px solid; */
   position: relative;
   animation-name: result-animation;
   animation-duration: 1s;
-  border-radius: 50px;
 }
 
 @keyframes result-animation {
@@ -112,13 +113,18 @@ body {
 }
 
 button {
-  width: 100px;
-  margin: 10px;
-  padding: 5px;
-  background-color: #9b2226;
-  color: white;
-  border-radius: 10px;
+  border: 3px solid #005f73;
+  border-radius: 25px;
+  background-color: white;
   cursor: pointer;
+  padding: 10px;
+  width: 150px;
+  font-size: 1.25rem;
+}
+
+button:hover {
+  background-color: #005f73;
+  color: white;
 }
 
 .button-wrapper {
@@ -136,7 +142,7 @@ button {
   margin: 20px;
   padding: 20px;
   border-radius: 25px;
-  border-bottom: 3px solid;
+  box-shadow: 0px 0px 10px #005f73;
 }
 
 @keyframes question-wrapper-animation {
@@ -157,17 +163,15 @@ button {
   animation-name: option0animation;
   animation-duration: 0.5s;
   animation-iteration-count: 1;
-  background-color: #94d2bd;
+  border: 2px solid #ee9b00;
 }
 
 @keyframes option0animation {
   0% {
-    background-color: white;
     right: 200px;
     top: -200px;
   }
   100% {
-    background-color: #94d2bd;
     right: 0px;
     top: 0px;
   }
@@ -177,17 +181,15 @@ button {
   position: relative;
   animation-name: option1animation;
   animation-duration: 0.5s;
-  background-color: #e9d8a6;
+  border: 2px solid #ee9b00;
 }
 
 @keyframes option1animation {
   0% {
-    background-color: white;
     left: 200px;
     top: -200px;
   }
   100% {
-    background-color: #e9d8a6;
     left: 0px;
     top: 0px;
   }
@@ -197,17 +199,15 @@ button {
   position: relative;
   animation-name: option2animation;
   animation-duration: 0.5s;
-  background-color: #ee9b00;
+  border: 2px solid #ee9b00;
 }
 
 @keyframes option2animation {
   0% {
-    background-color: white;
     right: 200px;
     top: 200px;
   }
   100% {
-    background-color: #ee9b00;
     right: 0px;
     top: 0px;
   }
@@ -217,18 +217,26 @@ button {
   position: relative;
   animation-name: option3animation;
   animation-duration: 0.5s;
-  background-color: #ca6702;
+  border: 2px solid #ee9b00;
 }
 
 @keyframes option3animation {
   0% {
-    background-color: white;
     left: 200px;
     top: 200px;
   }
   100% {
-    background-color: #ca6702;
     left: 0px;
     top: 0px;
   }
+}
+
+.option:hover {
+  background-color: #ee9b00;
+  cursor: pointer;
+  color: white;
+}
+
+.option:hover .text {
+  color: white;
 }
